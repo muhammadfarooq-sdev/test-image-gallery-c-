@@ -1,3 +1,4 @@
+using ImageGalleryApp.BusinessLogicLayer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -27,6 +28,8 @@ namespace ImageGalleryApp
             {
                 configuration.RootPath = "ClientApp/dist";
             });
+
+            services.AddTransient<IFileInfoService, FileInfoService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

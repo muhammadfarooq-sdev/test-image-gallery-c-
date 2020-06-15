@@ -1,0 +1,11 @@
+<form>
+  <div class="form-group">
+    <label for="fileDescription">File description</label>
+    <textarea class="form-control" id="fileDescription" rows="3" placeholder="File description"></textarea>
+  </div>
+  <div class="form-group">
+    <label for="fileControl">Choose file</label>
+    <input #fileControl type="file" class="form-control-file" id="fileControl">
+  </div>
+  <button type="submit" class="btn btn-primary" (click)="uploadImage()">Submit Image</button>
+</form>
