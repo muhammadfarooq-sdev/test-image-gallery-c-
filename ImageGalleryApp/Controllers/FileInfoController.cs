@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using ImageGalleryApp.BusinessLogicLayer;
 using ImageGalleryApp.ViewModels;
@@ -13,16 +14,47 @@ namespace ImageGalleryApp.Controllers
     [ApiController]
     public class FileInfoController : Controller
     {
-        private IFileInfoService fileInfoService;
-
+        private IFileInfoService _fileInfoService;
+        private ContentResult _internalServerError;
         public FileInfoController(IFileInfoService fileInfoService)
         {
-            this.fileInfoService = fileInfoService;
+            this._fileInfoService = fileInfoService;
+            this._internalServerError = new ContentResult()
+            {
+                StatusCode = (int)HttpStatusCode.InternalServerError,
+                Content = "Internal Server Error"
+            };
+        }
+        [HttpGet("[action]")]
+        public async Task<IActionResult> GetFile(int Id)
+        {
+            try
+            {
+                return Ok(await _fileInfoService.GetFile(Id));
+            }
+            catch (Exception)
+            {
+                return _internalServerError;
+                throw;
+            }
         }
         [HttpPost("[action]")]
-        public IActionResult UploadFile(FileInfoViewModel fileInfoViewModel)
+        public async Task<IActionResult> UploadFile([FromForm]FileInfoViewModel fileInfoViewModel)
         {
-            return Ok(fileInfoService.SaveFile(fileInfoViewModel));
+            try
+            {
+                var fileInfoViewModelDB = await this._fileInfoService.SaveFile(fileInfoViewModel);
+                var routeValues = new {
+                    fileInfoViewModelDB.Id
+                };
+                return new CreatedAtActionResult(actionName: "", controllerName: "FileInfo", 
+                    routeValues: routeValues, value:fileInfoViewModelDB);
+            }
+            catch (Exception)
+            {
+                return _internalServerError;
+                throw;
+            }
         }
 
     }

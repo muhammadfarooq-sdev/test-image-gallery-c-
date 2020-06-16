@@ -1,57 +1,45 @@
 import { Component, Inject, ViewChild } from '@angular/core';
-import { HttpClient, HttpParams, HttpHeaders } from '@angular/common/http';
-import * as S3 from 'aws-sdk/clients/s3';
+import { HttpClient } from '@angular/common/http';
+import { FileInfo } from '../model/fileInfo.model';
 
 @Component({
   selector: 'file-upload',
   templateUrl: './file-upload.component.html'
 })
 export class FileUploadComponent {
-  public forecasts: WeatherForecast[];
+  public fileInfo: FileInfo;
 
   @ViewChild('fileControl') fileControl;
 
   constructor(private http: HttpClient, @Inject('BASE_URL') private baseUrl: string) {
-    http.get<WeatherForecast[]>(baseUrl + 'api/SampleData/WeatherForecasts').subscribe(result => {
-      this.forecasts = result;
-    }, error => console.error(error));
+    this.fileInfo = {};
   }
 
   async uploadImage() {
+    if (!(this.fileControl && this.fileControl.nativeElement &&
+      this.fileControl.nativeElement.files &&
+      this.fileControl.nativeElement.files.length > 0)) {
+      return;
+    }
     const file = this.fileControl.nativeElement.files[0];
-
-     const contentType = file.type;
-    const s3 = new S3();
-    //      {
-    //          accessKeyId: 'YOUR-ACCESS-KEY-ID',
-    //          secretAccessKey: 'YOUR-SECRET-ACCESS-KEY',
-    //          region: 'YOUR-REGION'
-    //      }
-    //  );
-      const params = {
-        Bucket: 'test-image-gallery',
-        Key: `uploaded-images/${file.name}`,
-          Body: file,
-          ACL: 'public-read',
-          ContentType: contentType
-    };
+    
     try {
-      const uploadResult = await s3.upload(params).promise();
-      console.log('Successfully uploaded file.', uploadResult);
+      this.fileInfo.sizeInBytes = file.size;
+      this.fileInfo.type = file.type;
+      const formData: FormData = new FormData();
+      const formDataFileKey = 'formFile';
+      formData.append(formDataFileKey, file, file.name);
+      for (var key in this.fileInfo) {
+        formData.append(key, this.fileInfo[key]);
+      }
+      this.http.post<FileInfo>(this.baseUrl + 'api/FileInfo/UploadFile', formData).subscribe(result => {
+        this.fileInfo = result;
+    }, error => console.error(error));
       return true;
     } catch(err) {
       console.log('There was an error uploading your file: ', err);
       return false;
     }
-    //this.http.post<WeatherForecast[]>(this.baseUrl + 'api/FileInfo/UploadFile').subscribe(result => {
-    //  this.forecasts = result;
-    //}, error => console.error(error));
+   
   }
-}
-
-interface WeatherForecast {
-  dateFormatted: string;
-  temperatureC: number;
-  temperatureF: number;
-  summary: string;
 }

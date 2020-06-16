@@ -4,7 +4,7 @@
   "license": "MIT",
   "scripts": {
     "ng": "ng",
-    "start": "ng serve",
+    "start": "echo Starting... && ng serve",
     "build": "ng build",
     "build:ssr": "npm run build -- --app=ssr --output-hashing=media",
     "test": "ng test",
@@ -14,6 +14,7 @@
   "private": true,
   "dependencies": {
     "@angular/animations": "^9.1.11",
+    "autobahn-browser": "20.4.1",
     "@angular/common": "^9.1.11",
     "@angular/compiler": "^9.1.11",
     "@angular/core": "^9.1.11",
