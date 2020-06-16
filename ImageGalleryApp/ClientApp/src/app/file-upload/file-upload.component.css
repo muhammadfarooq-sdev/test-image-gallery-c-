@@ -1,0 +1,13 @@
+form {
+  width: 100%;
+}
+input {
+  padding-left: 0px;
+}
+.btn-wrapper {
+  padding-left: 0px;
+}
+.alert {
+  padding-top: 0.45rem;
+  padding-bottom: 0.45rem;
+}

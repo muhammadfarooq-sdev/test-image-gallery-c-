@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using SystemIO = System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -43,7 +44,8 @@ namespace ImageGalleryApp.BusinessLogicLayer
             FileInfo fileInfo;
             try
             {
-                fileInfoViewModel.URL = new Uri(signedURL).AbsolutePath;
+                var signedUri = new Uri(signedURL);
+                fileInfoViewModel.URL = signedURL.Substring(0, signedURL.IndexOf(signedUri.Query));
                 fileInfo = fileInfoViewModel.ToFileInfo();
                 this._applicationDbContext.Entry(fileInfo).State = EntityState.Added;
                 await this._applicationDbContext.SaveChangesAsync();
@@ -61,10 +63,13 @@ namespace ImageGalleryApp.BusinessLogicLayer
 
         private string generatePreSignedURL(string fileName)
         {
+            var fileNameWithoutExtension = SystemIO.Path.GetFileNameWithoutExtension(fileName);
+            var fileExtension = SystemIO.Path.GetExtension(fileName);
+            var fileNameUnique = $"{fileNameWithoutExtension}_{DateTime.Now.Ticks}{fileExtension}";
             var request = new GetPreSignedUrlRequest
             {
                 BucketName = "test-image-gallery",
-                Key = $"uploaded-images/{fileName}",
+                Key = $"uploaded-images/{fileNameUnique}",
                 Verb = HttpVerb.PUT,
                 Expires = DateTime.Now.AddMinutes(5)
             };
