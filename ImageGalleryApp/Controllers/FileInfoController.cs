@@ -25,22 +25,15 @@ namespace ImageGalleryApp.Controllers
                 Content = "Internal Server Error"
             };
         }
-        [HttpGet("[action]")]
-        public async Task<IActionResult> GetFile(int Id)
-        {
-            try
-            {
-                return Ok(await _fileInfoService.GetFile(Id));
-            }
-            catch (Exception)
-            {
-                return _internalServerError;
-                throw;
-            }
-        }
+
         [HttpPost("[action]")]
         public async Task<IActionResult> UploadFile([FromForm]FileInfoViewModel fileInfoViewModel)
         {
+            //if (ModelState.IsValid)
+            //{
+            //    return BadRequest(ModelState);
+            //}
+
             try
             {
                 var fileInfoViewModelDB = await this._fileInfoService.SaveFile(fileInfoViewModel);

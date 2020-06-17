@@ -6,7 +6,7 @@
               [(ngModel)]="fileInfo.description" rows="3" placeholder="File description"
               #fileDescription="ngModel"></textarea>
     <div class="col-sm-4">
-      <div *ngIf="fileDescription.invalid && (fileDescription.dirty || fileDescription.touched) && fileDescription.errors.required"
+      <div *ngIf="fileDescription.invalid && fileDescription.errors.required"
            class="alert alert-danger">
         File description is required
       </div>

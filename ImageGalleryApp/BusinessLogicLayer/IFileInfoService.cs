@@ -9,6 +9,5 @@ namespace ImageGalleryApp.BusinessLogicLayer
     public interface IFileInfoService
     {
         Task<FileInfoViewModel> SaveFile(FileInfoViewModel fileInfoViewModel);
-        Task<FileInfoViewModel> GetFile(int Id);
     }
 }

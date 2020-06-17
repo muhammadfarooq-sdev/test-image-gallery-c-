@@ -12,7 +12,6 @@ namespace ImageGalleryApp.ViewModels
         public int Id { get; set; }
         [Required(ErrorMessage = "Description is required")]
         public string Description { get; set; }
-        //[Required(ErrorMessage = "URL is required")]
         public string URL { get; set; }
         [Required(ErrorMessage = "Type is required")]
         public string Type { get; set; }

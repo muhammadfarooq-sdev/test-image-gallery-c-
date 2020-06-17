@@ -55,8 +55,8 @@ export class FileUploadComponent {
       this.ngxSpinnerService.show();
       this.successUploadMessage = "";
       this.errorUploadMessage = "";
-      this.http.post<FileInfo>(this.baseUrl + 'api/FileInfo/UploadFile', formData).subscribe(result => {
-        this.fileInfo = result;
+      const apiUrl = `${this.baseUrl}api/FileInfo/UploadFile`;
+      this.http.post<FileInfo>(apiUrl, formData).subscribe(result => {
         this.ngxSpinnerService.hide();
         this.successUploadMessage = "Success";
       }, error => {
@@ -65,8 +65,8 @@ export class FileUploadComponent {
         this.ngxSpinnerService.hide();
       });
       return true;
-    } catch(err) {
-      console.log('There was an error uploading your file: ', err);
+    } catch (err) {
+      console.error(err);
       return false;
     }
    

@@ -29,13 +29,6 @@ namespace ImageGalleryApp.BusinessLogicLayer
             this._httpClientFactory = httpClientFactory;
         }
 
-        public Task<FileInfoViewModel> GetFile(int Id)
-        {
-            return this._applicationDbContext.FileInfo
-                .Where(fileInfo => fileInfo.Id == Id)
-                .ToFileInfoViewModel().FirstOrDefaultAsync();
-        }
-
         public async Task<FileInfoViewModel> SaveFile(FileInfoViewModel fileInfoViewModel)
         {
             var signedURL = generatePreSignedURL(fileInfoViewModel.FormFile.FileName);

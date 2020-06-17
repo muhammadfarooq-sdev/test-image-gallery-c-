@@ -32,16 +32,20 @@ namespace ImageGalleryAppTests.BusinessLayer
         [Fact]
         public async Task WhenNoErrorThenSaveFileTestReturnsFileInfoViewModel()
         {
+            // Arrange
             var formFileMock = new Mock<IFormFile>();
-            
+
             const string testQuery = "?testquery";
             const string urlWithoutQuery = "http://signed_Url/test.png";
             string s3SignedURL = $"{urlWithoutQuery}{testQuery}";
             var fileInfoViewModel = getFileInfoViewModel(formFileMock);
 
             var fileInfoService = getFileInfoService(s3SignedURL, formFileMock, getApplicationDbContext());
+
+            // Act
             FileInfoViewModel fileInfoViewModelResult = await fileInfoService.SaveFile(fileInfoViewModel);
-            
+
+            // Assert
             fileInfoViewModelResult.ShouldSatisfyAllConditions(
                 () => fileInfoViewModelResult.Id.ShouldBeGreaterThan(0),
                 () => fileInfoViewModelResult.URL.ShouldBe(urlWithoutQuery),
@@ -52,6 +56,7 @@ namespace ImageGalleryAppTests.BusinessLayer
         [Fact]
         public async Task WhenErrorAfterUploadToS3ThenSaveFileDeletedFileAndThrowsException()
         {
+            // Arrange
             var formFileMock = new Mock<IFormFile>();
 
             const string testQuery = "?testquery";
@@ -60,11 +65,14 @@ namespace ImageGalleryAppTests.BusinessLayer
 
             var fileInfoViewModel = getFileInfoViewModel(formFileMock);
             var fileInfoService = getFileInfoService(s3SignedURL, formFileMock, null);
+
+            // Act, Assert
             await fileInfoService.SaveFile(fileInfoViewModel).ShouldThrowAsync<Exception>();
         }
         [Fact]
-        public void WhenErrorInUploadToS3ThenSaveFileThrowsException()
+        public async Task WhenErrorInUploadToS3ThenSaveFileThrowsException()
         {
+            // Arrange
             var formFileMock = new Mock<IFormFile>();
 
             const string testQuery = "?testquery";
@@ -72,8 +80,10 @@ namespace ImageGalleryAppTests.BusinessLayer
             string s3SignedURL = $"{urlWithoutQuery}{testQuery}";
 
             var fileInfoViewModel = new FileInfoViewModel { };
-            var fileInfoService = getFileInfoService(s3SignedURL, formFileMock, getApplicationDbContext());
-            fileInfoService.SaveFile(fileInfoViewModel).ShouldThrow<Exception>();
+            var fileInfoService = getFileInfoService(s3SignedURL, formFileMock, null);
+
+            // Act, Assert
+            await fileInfoService.SaveFile(fileInfoViewModel).ShouldThrowAsync<Exception>();
         }
         private FileInfoViewModel getFileInfoViewModel(Mock<IFormFile> formFileMock)
         {
@@ -95,9 +105,9 @@ namespace ImageGalleryAppTests.BusinessLayer
         }
         private IFileInfoService getFileInfoService(string s3SignedURL, Mock<IFormFile> formFileMock,
             ApplicationDbContext applicationDbContext)
-        {            
+        {
             var amazonS3Mock = new Mock<IAmazonS3>();
-            
+
             const string fileName = "test.png";
 
             var streamMock = new Mock<SystemIO.Stream>();
@@ -118,11 +128,13 @@ namespace ImageGalleryAppTests.BusinessLayer
                     StatusCode = HttpStatusCode.OK,
                     Content = new StringContent(fixture.Create<String>()),
                 });
-
-            var client = new HttpClient(mockHttpMessageHandler.Object);
-            client.BaseAddress = fixture.Create<Uri>();
-            httpClientFactoryMock.Setup(_ => _.CreateClient(It.IsAny<string>())).Returns(client);
             
+            httpClientFactoryMock.Setup(_ => _.CreateClient(It.IsAny<string>()))
+                .Returns(() => new HttpClient(mockHttpMessageHandler.Object)
+                {
+                    BaseAddress = fixture.Create<Uri>()
+                });
+
             FileInfoService fileInfoService = new FileInfoService(
                 applicationDbContext,
                 amazonS3Mock.Object,

@@ -17,7 +17,6 @@ namespace ImageGalleryApp
     {
         public static void Main(string[] args)
         {
-            //System.Diagnostics.Debugger.Launch();
             var webHost = CreateWebHostBuilder(args).Build();
             using (var scope = webHost.Services.CreateScope())
             {
