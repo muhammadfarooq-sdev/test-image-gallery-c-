@@ -18,11 +18,15 @@ namespace ImageGalleryApp.BusinessLogicLayer
     {
         private readonly ApplicationDbContext _applicationDbContext;
         private readonly IAmazonS3 _amazonS3;
+        private readonly IHttpClientFactory _httpClientFactory;
 
-        public FileInfoService(ApplicationDbContext applicationDbContext, IAmazonS3 amazonS3)
+        public FileInfoService(ApplicationDbContext applicationDbContext, 
+            IAmazonS3 amazonS3, 
+            IHttpClientFactory httpClientFactory)
         {
             this._applicationDbContext = applicationDbContext;
             this._amazonS3 = amazonS3;
+            this._httpClientFactory = httpClientFactory;
         }
 
         public Task<FileInfoViewModel> GetFile(int Id)
@@ -35,24 +39,26 @@ namespace ImageGalleryApp.BusinessLogicLayer
         public async Task<FileInfoViewModel> SaveFile(FileInfoViewModel fileInfoViewModel)
         {
             var signedURL = generatePreSignedURL(fileInfoViewModel.FormFile.FileName);
-            using (var httpClient = new HttpClient())
+            using (var httpClient = _httpClientFactory.CreateClient())
             using (var fileStream = fileInfoViewModel.FormFile.OpenReadStream())
             {
                 var putResponseMessage = await httpClient.PutAsync(signedURL, new StreamContent(fileStream));
                 putResponseMessage.EnsureSuccessStatusCode();
             }
+
             FileInfo fileInfo;
             try
             {
                 var signedUri = new Uri(signedURL);
-                fileInfoViewModel.URL = signedURL.Substring(0, signedURL.IndexOf(signedUri.Query));
+                var fileS3URL = signedURL.Substring(0, signedURL.IndexOf(signedUri.Query));
+                fileInfoViewModel.URL = fileS3URL;
                 fileInfo = fileInfoViewModel.ToFileInfo();
                 this._applicationDbContext.Entry(fileInfo).State = EntityState.Added;
                 await this._applicationDbContext.SaveChangesAsync();
             }
             catch (Exception)
             {
-                using (var httpClient = new HttpClient())
+                using (var httpClient = _httpClientFactory.CreateClient())
                 {
                     await httpClient.DeleteAsync(signedURL);
                 }

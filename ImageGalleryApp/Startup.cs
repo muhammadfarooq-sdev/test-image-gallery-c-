@@ -12,7 +12,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json.Serialization;
 using System;
 
-
 namespace ImageGalleryApp
 {
     public class Startup
@@ -37,6 +36,8 @@ namespace ImageGalleryApp
             {
                 configuration.RootPath = "ClientApp/dist";
             });
+
+            services.AddHttpClient();
             services.AddDefaultAWSOptions(Configuration.GetAWSOptions());
             services.AddAWSService<IAmazonS3>();
             services.AddTransient<IFileInfoService, FileInfoService>();
