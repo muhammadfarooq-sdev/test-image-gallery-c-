@@ -23,7 +23,6 @@ And I click on "image.jpg" less than or equal in size to 500 KB
 And I press on “ENTER”
 And I click on "Submit image button"
 Then I should see text “Failed” in “Response message placeholder”
-And I should see text “Required” in “File description error placeholder”
 
 Scenario: Upload new image with success
 Given browser "Google Chrome"
