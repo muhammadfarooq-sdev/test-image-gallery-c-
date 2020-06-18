@@ -43,7 +43,7 @@ namespace ImageGalleryAppTests
             var amazonS3 = webHost.Services.GetService<IAmazonS3>();
             var fileInfoService = serviceScope.ServiceProvider.GetService<IFileInfoService>();
 
-            //applicationDbContext.ShouldBeOfType<ApplicationDbContext>();
+            applicationDbContext.ShouldBeOfType<ApplicationDbContext>();
             httpClientFactory.ShouldBeAssignableTo<IHttpClientFactory>();
             amazonS3.ShouldBeAssignableTo<IAmazonS3>();
             fileInfoService.ShouldBeAssignableTo<IFileInfoService>();
