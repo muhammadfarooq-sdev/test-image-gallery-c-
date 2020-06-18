@@ -4,6 +4,7 @@ https://github.com/muhammadfarooq-cross-over/test-image-gallery-c-
 ## Run Solution
 Open Powershell 
 $Env:ASPNETCORE_ENVIRONMENT = "Development"
+
 dotnet run
 
 Once it has completed execution, you can open http://localhost:5000 in browser 
