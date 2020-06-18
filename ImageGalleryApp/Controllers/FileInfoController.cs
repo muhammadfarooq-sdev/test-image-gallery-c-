@@ -29,11 +29,6 @@ namespace ImageGalleryApp.Controllers
         [HttpPost("[action]")]
         public async Task<IActionResult> UploadFile([FromForm]FileInfoViewModel fileInfoViewModel)
         {
-            //if (ModelState.IsValid)
-            //{
-            //    return BadRequest(ModelState);
-            //}
-
             try
             {
                 var fileInfoViewModelDB = await this._fileInfoService.SaveFile(fileInfoViewModel);

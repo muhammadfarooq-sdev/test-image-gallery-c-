@@ -38,7 +38,7 @@ export class FileUploadComponent {
     const bytesInKB = 1024;
     const maxSizeInBytes = sizeInKB * bytesInKB;
     if (file.size > maxSizeInBytes) {
-      const fileSizeGreaterThanMaxError = `File size greater than ${sizeInKB}KB`;
+      const fileSizeGreaterThanMaxError = `File size greater than ${sizeInKB} KB`;
       this.fileError = fileSizeGreaterThanMaxError;
       return;
     }
