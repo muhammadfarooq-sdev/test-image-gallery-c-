@@ -45,5 +45,10 @@ namespace ImageGalleryApp.Controllers
             }
         }
 
+        [HttpPost("[action]")]
+        public async Task<IActionResult> SearchForImage(string description, string type, long? sizeInBytes)
+        {
+            return Ok();
+        }
     }
 }

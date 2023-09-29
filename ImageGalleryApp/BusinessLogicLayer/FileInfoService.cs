@@ -60,6 +60,11 @@ namespace ImageGalleryApp.BusinessLogicLayer
             return fileInfo.ToFileInfoViewModel();
         }
 
+        public Task<FileInfoViewModel> SearchForImage(string description, string type, long? sizeInBytes)
+        {
+            _applicationDbContext.FileInfo.Where(desc)
+        }
+
         private string generatePreSignedURL(string fileName)
         {
             var fileNameWithoutExtension = SystemIO.Path.GetFileNameWithoutExtension(fileName);
